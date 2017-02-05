@@ -23,6 +23,9 @@ colnames(nic_uplc)[1] <- "Sample"
 nic_uplc[, 2:4] <- sapply(nic_uplc[, 2:4], as.numeric)
 nic_uplc$Method <- "UPLC"
 nic_uplc <- nic_uplc[,c(1,5,2:4)]
+
+
+
 nic_uplc <- tidyr::gather(data = nic_uplc, key = Batch, value = Result, na.rm = FALSE, `VITB01-17-0004`, `VITB01-17-0005`, `VITB01-17-0006`)
 
 nic_hplc <- nic_acid[1:6,]
