@@ -27,12 +27,15 @@ nic_long <- rbind(nic_hplc_long,nic_uplc_long)
 nic_long <- na.omit(nic_long)
 write_csv(nic_long,"~/Documents/GitHub/nicotinic_acid/data/long_data.csv" )
 
-# ANOVA ------------------------------------------------------------------
+# ANOVA nic_hplc ---------------------------------------------------------
 
 sample_no <- unique(nic_long$Sample)
 
 nic_hplc_aov <- nic_long %>% 
-        filter(Sample == sample_no[1] & Method == "HPLC")
+        filter(Sample == sample_no[2] & Method == "HPLC")
+
+boxplot(nic_hplc_aov$Result~nic_hplc_aov$Batch)
+
 nic_hplc_anova <- aov(Result ~ Batch, data = nic_hplc_aov)
 summary(nic_hplc_anova)
 
@@ -42,6 +45,30 @@ TukeyHSD(nic_hplc_anova)
 #Repeatability & Interim Precision
 mean.sqr <- summary(nic_hplc_anova)[1][[1]][[3]]
 ncount <- as.numeric(length(nic_hplc_anova$effects))/as.numeric(length(nic_hplc_anova$coefficients))
+sdr <- sqrt(mean.sqr[2])
+interim <- sqrt((mean.sqr[1]-mean.sqr[2])/ncount)
+sdR <- sqrt(sdr^2 + interim^2)
+sdr
+sdR
+
+# ANOVA nic_uplc ---------------------------------------------------------
+
+sample_no <- unique(nic_long$Sample)
+
+nic_uplc_aov <- nic_long %>% 
+        filter(Sample == sample_no[1] & Method == "UPLC")
+
+boxplot(nic_uplc_aov$Result~nic_uplc_aov$Batch)
+
+nic_uplc_anova <- aov(Result ~ Batch, data = nic_uplc_aov)
+summary(nic_uplc_anova)
+
+#Check for significant differences
+TukeyHSD(nic_uplc_anova)
+
+#Repeatability & Interim Precision
+mean.sqr <- summary(nic_uplc_anova)[1][[1]][[3]]
+ncount <- as.numeric(length(nic_uplc_anova$effects))/as.numeric(length(nic_uplc_anova$coefficients))
 sdr <- sqrt(mean.sqr[2])
 interim <- sqrt((mean.sqr[1]-mean.sqr[2])/ncount)
 sdR <- sqrt(sdr^2 + interim^2)
